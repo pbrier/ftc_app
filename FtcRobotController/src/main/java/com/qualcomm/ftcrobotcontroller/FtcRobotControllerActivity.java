@@ -80,6 +80,8 @@ import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import lejos.AppContext;
+
 public class FtcRobotControllerActivity extends Activity {
 
   private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
@@ -149,6 +151,7 @@ public class FtcRobotControllerActivity extends Activity {
     setContentView(R.layout.activity_ftc_controller);
 
     context = this;
+    AppContext.setContext(this);
     utility = new Utility(this);
     entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
 
