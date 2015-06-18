@@ -10,6 +10,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import lejos.nxt.remote.NXTCommRequest;
+import lejos.nxt.remote.NXTCommand;
+import lejos.nxt.remote.NXTProtocol;
+import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTConnector;
 
 import java.lang.Thread;
@@ -68,6 +72,14 @@ public class NxtDeviceConnection {
      * and informs the application.
      */
     private void nxtDeviceAttached() {
+        try {
+            new NXTCommand(conn.getNXTComm()).playTone(3000, 10);
+            new NXTCommand(conn.getNXTComm()).startProgram("SegwayApp.nxj");
+
+        } catch (Exception e) {
+
+        }
+
         inDat = new DataInputStream(conn.getInputStream());
         outDat = new DataOutputStream(conn.getOutputStream());
         connected = true;
@@ -94,10 +106,14 @@ public class NxtDeviceConnection {
      */
     public void connect()
     {
+        DbgLog.msg("Connect NXT..");
         try {
             for (int i =0; i<10; i++) {
+                DbgLog.msg(String.format("NXT Connect Attempt: %d", i));
                 if (conn.connectTo("usb://")) {
+                    DbgLog.msg("Found NXT..");
                     nxtDeviceAttached();
+                    DbgLog.msg("Attached to NXT.");
                     return;
                 }
                 Thread.sleep(100);
@@ -105,7 +121,7 @@ public class NxtDeviceConnection {
         }
         catch (InterruptedException e) {
             DbgLog.logStacktrace(e);
-            System.err.println("Failed to open connection to the NXT" + e.toString());
+            DbgLog.msg("Failed to open connection to the NXT" + e.toString());
         }
     }
 

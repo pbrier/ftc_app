@@ -13,6 +13,8 @@ import android.hardware.usb.UsbManager;
 import android.content.Context;
 import android.hardware.usb.UsbManager;
 
+import com.qualcomm.ftccommon.DbgLog;
+
 import lejos.AppContext;
 
 
@@ -36,6 +38,7 @@ public class NXTCommAndroidUSB extends NXTCommUSB {
 
 	public NXTCommAndroidUSB() {
 		manager = AppContext.getUSBManager();
+		DbgLog.msg("NXTCommAndroidUSB()");
 		// manager = (UsbManager) getSystemService(Context.USB_SERVICE);
 	}
 	/**
@@ -44,19 +47,23 @@ public class NXTCommAndroidUSB extends NXTCommUSB {
 	 */
 	@Override
 	Vector<NXTInfo> devFind() {
+		DbgLog.msg("devFind()");
 		HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
 		Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
 		Vector<NXTInfo> nxtInfos = new Vector<NXTInfo>();
 		if (!deviceIterator.hasNext()) {
 			//No devices found
+			DbgLog.msg("No devices found");
 		} else {
 			while (deviceIterator.hasNext()) {
 				UsbDevice device = deviceIterator.next();
+				DbgLog.msg(String.format("Found %x:%x", device.getProductId(), device.getVendorId()));
 				if (device.getProductId() == 2 && device.getVendorId() == 1684) {
 					NXTInfo info = new NXTInfo();
 					info.name = device.getDeviceName();
 					info.protocol = NXTCommFactory.USB;
 					nxtInfos.addElement(info);
+					DbgLog.msg("Found NXT");
 				}
 			}
 		}
@@ -68,20 +75,26 @@ public class NXTCommAndroidUSB extends NXTCommUSB {
 	 */
 	@Override
 	long devOpen(NXTInfo nxt) {
+		DbgLog.msg("devOpen...");
 		HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
 		Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
 		UsbDevice device;
+		DbgLog.msg("Searching for NXT");
 		if (!deviceIterator.hasNext()) {
+			DbgLog.msg("No devices");
 			return 0;
 		} else {
 			while (deviceIterator.hasNext()) {
 				device = deviceIterator.next();
+				DbgLog.msg("Device name: " + device.getDeviceName());
 				if (device.getDeviceName().equals(nxt.name)) {
+					DbgLog.msg("Found NXT");
 					UsbInterface intf;
 					intf = device.getInterface(0);
 					connection = manager.openDevice(device);
-					
-		//			Preconditions.checkState(connection.claimInterface(intf, true));
+					DbgLog.msg("Connection opened");
+					//Preconditions.checkState(onnection.claimInterface(intf, true));
+					connection.claimInterface(intf, true);
 					for (int i = 0; i < intf.getEndpointCount(); i++) {
 						UsbEndpoint endpoint = intf.getEndpoint(i);
 						if (endpoint.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
@@ -93,6 +106,7 @@ public class NXTCommAndroidUSB extends NXTCommUSB {
 						}
 					}
 					if (outgoingEndpoint == null || incomingEndpoint == null) {
+						DbgLog.error("Not all endpoints found!");
 						throw new IllegalArgumentException(
 								"Not all endpoints found.");
 					}

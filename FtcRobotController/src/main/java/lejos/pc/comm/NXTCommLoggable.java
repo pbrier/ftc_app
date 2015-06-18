@@ -1,5 +1,7 @@
 package lejos.pc.comm;
 
+import com.qualcomm.ftccommon.DbgLog;
+
 import java.util.ArrayList;
 
 /**
@@ -54,6 +56,7 @@ public abstract class NXTCommLoggable {
 		for (NXTCommLogListener listener : fLogListeners) {
 			listener.logEvent(s);
 		}
+		DbgLog.msg(s);
 	}
 	
 }

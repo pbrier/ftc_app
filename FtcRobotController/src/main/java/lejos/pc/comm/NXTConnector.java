@@ -19,8 +19,8 @@ public class NXTConnector extends NXTCommLoggable
 	private OutputStream output;
 	private NXTInfo nxtInfo;
 	private NXTComm nxtComm;
-	private boolean debugOn = false;
-    
+	private boolean debugOn = true;
+
 	/**
 	 * Connect to any NXT over any protocol in <code>NXTComm.PACKET</code> mode
 	 * 
