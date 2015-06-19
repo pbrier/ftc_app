@@ -73,8 +73,8 @@ public class NxtDeviceConnection {
      */
     private void nxtDeviceAttached() {
         try {
-            new NXTCommand(conn.getNXTComm()).playTone(3000, 10);
-            new NXTCommand(conn.getNXTComm()).startProgram("SegwayApp.nxj");
+         //   new NXTCommand(conn.getNXTComm()).playTone(3000, 10);
+          //  new NXTCommand(conn.getNXTComm()).startProgram("nxt_app.nxj");
 
         } catch (Exception e) {
 
