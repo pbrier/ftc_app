@@ -47,9 +47,7 @@ public class NxtDeviceConnection {
         else {
             try {
                 outDat.writeByte(header);
-                if (header == 1) {
-                    outDat.writeFloat((float)body);
-                }
+                outDat.writeFloat((float) body);
                 outDat.flush();
                 return true;
             }

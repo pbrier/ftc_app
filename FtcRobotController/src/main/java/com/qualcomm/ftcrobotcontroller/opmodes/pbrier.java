@@ -73,7 +73,9 @@ public class pbrier extends OpMode {
     DbgLog.msg("Attempting to connect to NXT");
 
     nxt.connect();
-    DbgLog.msg( (nxt.isConnected() ? "NXT Connected" : "NXT Not Connected"));
+    DbgLog.msg((nxt.isConnected() ? "NXT Connected" : "NXT Not Connected"));
+    nxt.sendPacket(255, 1.0); // start
+
   }
 
   /*
@@ -86,8 +88,18 @@ public class pbrier extends OpMode {
     telemetry.addData("2 Status", "running for " + runtime.toString());
     telemetry.addData("gamepad1", gamepad1.toString());
     telemetry.addData("gamepad2", gamepad2.toString());
+    telemetry.addData("left_y", String.format("%f", (float) gamepad1.left_stick_y));
 
+
+    // Send joystick state: TODO: send all in one packet
     nxt.sendPacket(1, getRuntime());
+    nxt.sendPacket(2, gamepad1.left_stick_y);
+    nxt.sendPacket(3, gamepad1.right_stick_y);
+    nxt.sendPacket(4, gamepad1.left_trigger);
+    nxt.sendPacket(5, gamepad1.right_trigger);
+    nxt.sendPacket(6, (gamepad1.left_bumper ? 1.0 : 0.0));
+    nxt.sendPacket(7, (gamepad1.right_bumper ? 1.0 : 0.0));
+
     telemetry.addData("nxt", (nxt.isConnected() ? "NXT Connected" : "NXT Not Connected"));
     if ( FirstLoop ) {
      // AppContext.getContext().showToast(Toast.makeText(AppContext.getContext(), "Bla", Toast.LENGTH_LONG));
@@ -101,6 +113,7 @@ public class pbrier extends OpMode {
    */
   @Override
   public void stop() {
-
+    nxt.sendPacket(255, 0.0); // start
+    nxt.disconnect();
   }
 }
